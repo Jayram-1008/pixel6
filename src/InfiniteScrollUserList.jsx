@@ -14,24 +14,28 @@ const InfiniteScrollUserList = () => {
     const [genderFilter, setGenderFilter] = useState("");
     const [cityFilter, setCityFilter] = useState("");
 
+    // This function is helpful for filtering the userLists according to the city
     const getUniqueCities = (users) => {
         const cities = users.map(user => user.address.city);
         return [...new Set(cities)];  // Return unique city names using Set
     }
 
-    const uniqueCities = getUniqueCities(users);  // Get array of unique city names
+    // Get array of unique city names
+    const uniqueCities = getUniqueCities(users);  
 
+    // we pass this filteredUser as a props in the UserData Component
     const filteredUsers = users.filter(user => {
         return (genderFilter ? user.gender === genderFilter : true) && 
                (cityFilter ? user.address.city === cityFilter : true);
     });
 
+    // This is responsible for reset out filter 
     const resetFilters = () => {
         setGenderFilter("");
         setCityFilter("");
     };
 
-
+    // This is the main funciton for fetching the userData
     const fetchUsers = useCallback(async (page) => {
         setLoading(true);
         try {
@@ -51,6 +55,7 @@ const InfiniteScrollUserList = () => {
         }
     }, []);
 
+    // This useEffect is responsible for fetching the UserData from API when page first time loading and it is dependent on the page                    
     useEffect(() => {
         fetchUsers(page);
     }, [page, fetchUsers]);
@@ -117,7 +122,7 @@ const InfiniteScrollUserList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <UserData users={users}/>
+                    <UserData users={filteredUsers}/>
                 </tbody>
             </table>
             {loading && <p>Loading...</p>}
